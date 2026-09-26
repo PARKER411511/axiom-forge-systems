@@ -1,0 +1,1 @@
+export function SectionHeading({eyebrow,title,description}:{eyebrow:string;title:string;description?:string}){return <div className="section-heading"><div><div className="eyebrow">{eyebrow}</div><h2 className="display">{title}</h2></div>{description&&<p>{description}</p>}</div>}

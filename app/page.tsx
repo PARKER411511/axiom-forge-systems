@@ -1,69 +1,19 @@
 import Image from "next/image";
-
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-}
+import Link from "next/link";
+import { images, products, industries, projects } from "@/lib/data";
+import { ProductCard } from "@/components/product-card";
+import { SectionHeading } from "@/components/section-heading";
+const stats=[["40+","Years of Engineering"],["32","Countries Served"],["2,400+","Systems Installed"],["99.2%","Operational Reliability"]];
+const process=["Application Analysis","System Engineering","Manufacturing","Testing","Installation","Lifecycle Support"];
+const featuredProducts = [products[0], products[2], products[4], products[6]];
+export default function Home(){return <>
+<section className="hero"><div className="hero-media"><Image src={images.hero} alt="Industrial manufacturing facility" fill priority sizes="100vw"/></div><div className="hero-content"><div className="eyebrow">Engineering since 1984</div><h1 className="display">ENGINEERED FOR<br/>RELENTLESS INDUSTRY.</h1><p className="hero-intro">High-performance industrial systems engineered for demanding environments, critical infrastructure, and continuous operation.</p><div className="hero-buttons"><Link className="button button-primary" href="/products">Explore Systems <span>→</span></Link><Link className="button button-outline" href="/request-quote">Request a Quote</Link></div><div className="hero-rule">Industrial equipment · engineered to perform</div></div><div className="hero-index">AXIOM / 001</div></section>
+<section className="stats-strip"><div className="container stats-grid">{stats.map(([n,l])=><div className="stat-item" key={l}><span className="stat-number">{n}</span><span className="stat-label">{l}</span></div>)}</div></section>
+<section className="section section-light"><div className="container intro-grid"><div className="intro-copy"><div className="eyebrow">About Axiom</div><h2 className="display">Built around the environments where failure isn&apos;t an option.</h2><p>Axiom Forge Systems designs and manufactures industrial equipment for the hard-working middle of the world&apos;s most critical operations. We combine application-specific engineering, disciplined manufacturing, and field support that stays close to the work.</p><div className="intro-meta"><div><strong>1984</strong><span>Founded in Houston</span></div><div><strong>24/7</strong><span>Lifecycle support</span></div></div><Link className="text-link" href="/about" style={{marginTop:32}}>Our story <span>→</span></Link></div><div className="media-frame intro-media"><Image src={images.factory} alt="Axiom-style industrial factory floor" fill sizes="(max-width: 980px) 100vw, 50vw"/><div className="media-caption">Houston manufacturing floor / 29°45&apos;N</div></div></div></section>
+<section className="section section-surface"><div className="container"><SectionHeading eyebrow="Product systems" title="Systems engineered to perform." description="From individual equipment to integrated process lines, every Axiom system starts with the conditions it has to survive."/><div className="product-grid">{featuredProducts.map((p,i)=><ProductCard product={p} featured={i===0} key={p.slug}/>)}</div><Link className="text-link" href="/products" style={{marginTop:40}}>View all products <span>→</span></Link></div></section>
+<section id="engineering" className="section section-border"><div className="container process-layout"><div className="process-intro"><div className="eyebrow">Engineering delivery</div><h2 className="display">From concept to commissioning.</h2><p>One accountable engineering partner from the first application question to the first production run — and every service interval after it.</p></div><div className="timeline">{process.map((item,i)=><div className="timeline-step" key={item}><span className="timeline-step-number">0{i+1}</span><div><h3>{item}</h3><p>{["Define duty, constraints, and the actual operating envelope.","Model the system around performance, materials, and access.","Build to controlled processes and documented quality gates.","Verify performance before equipment reaches the site.","Support startup with field teams who know the design.","Keep performance visible through service and upgrades."][i]}</p></div><span className="timeline-arrow">↗</span></div>)}</div></div></section>
+<section className="section section-surface"><div className="container"><SectionHeading eyebrow="Featured project" title="Measured improvement in the field." description="A modernization program designed around the facility&apos;s actual operating conditions — not a catalogue average."/><div className="project-feature"><div className="project-feature-media"><Image src={projects[0].image} alt="Rotterdam processing facility" fill sizes="(max-width: 980px) 100vw, 55vw"/></div><div className="project-feature-content"><div className="eyebrow">Rotterdam Processing Facility</div><h2 className="display">28% lower energy consumption after system modernization.</h2><p>Rotterdam, Netherlands · Chemical Processing · AF-P900 Process Pump System</p><div className="project-facts"><div className="project-fact"><strong>28%</strong><span>Energy reduction</span></div><div className="project-fact"><strong>41%</strong><span>Lower maintenance</span></div><div className="project-fact"><strong>99.6%</strong><span>System availability</span></div></div><Link className="text-link" href={`/projects/${projects[0].slug}`}>View case study <span>→</span></Link></div></div></div></section>
+<section className="section"><div className="container"><SectionHeading eyebrow="Industries" title="Built for the work that keeps the world moving." description="Seven sectors. One engineering standard: specify for the reality of the site."/><div className="image-grid">{industries.slice(0,3).map(i=><Link className="image-card" href={`/industries#${i.slug}`} key={i.slug}><Image src={i.image} alt={`${i.name} industrial environment`} fill sizes="(max-width: 680px) 100vw, 33vw"/><div className="image-card-content"><div className="eyebrow">0{industries.indexOf(i)+1}</div><h3>{i.name}</h3><p>{i.description}</p></div></Link>)}</div><Link className="text-link" href="/industries" style={{marginTop:40}}>Explore industries <span>→</span></Link></div></section>
+<section className="section section-surface section-border"><div className="container"><SectionHeading eyebrow="Why Axiom" title="Engineering without compromise."/><div className="principles">{[["01","Application-Specific Engineering","Equipment configured for your process, not a generic duty point."],["02","Global Manufacturing Standards","Documented quality systems at every design and build stage."],["03","24/7 Lifecycle Support","Field-ready support that stays engaged long after commissioning."],["04","ISO-Certified Quality Systems","A disciplined standard for repeatable, accountable work."]].map(([n,t,d])=><div className="principle" key={n}><div className="principle-index">{n}</div><h3>{t}</h3><p>{d}</p></div>)}</div></div></section>
+<div className="cert-strip"><div className="container certs">{["ISO 9001","ISO 14001","CE","API","ATEX"].map(c=><div className="cert" key={c}>{c}<small>QUALITY STANDARD</small></div>)}</div></div>
+</>}

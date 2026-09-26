@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { industries, products } from "@/lib/data";
+import { ProductsExplorer } from "./products-explorer";
+export const metadata:Metadata={title:"Industrial Products",description:"Explore Axiom Forge Systems industrial pumps, flow control, conveyors, and thermal systems."};
+export default async function ProductsPage({searchParams}:{searchParams:Promise<{industry?:string}>}){const {industry}=await searchParams;const initialIndustry=industries.find(item=>item.slug===industry)?.name;return <><section className="page-hero"><div className="container"><div className="eyebrow">Product systems</div><h1 className="display">Equipment with a job to do.</h1><p>Explore configurable industrial systems built for continuous operation, demanding process conditions, and the realities of the field.</p><div className="page-hero-meta"><div><span>08</span> Platforms</div><div><span>04</span> System families</div><div><span>24/7</span> Lifecycle support</div></div></div></section><section className="section"><div className="container"><ProductsExplorer products={products} initialIndustry={initialIndustry}/></div></section></>}
