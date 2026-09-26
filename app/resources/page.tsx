@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { resources } from "@/lib/data";
+import { pageMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "Resources",
-  description: "Product datasheets, engineering guides, installation manuals, and technical articles from Axiom Forge Systems.",
-};
+export const metadata: Metadata = pageMetadata({title:"Resources",description:"Product datasheets, engineering guides, installation manuals, and technical articles from Axiom Forge Systems.",path:"/resources",image:"/images/engineer.jpg"});
 
 export default function ResourcesPage() {
   return <>
@@ -23,10 +22,11 @@ export default function ResourcesPage() {
             <div className="eyebrow">{resource.type}</div>
             <h3>{resource.title}</h3>
             <p>{resource.description}</p>
-            <span className="resource-preview">Concept preview</span>
+            <div className="resource-meta">{resource.meta}</div>
+            {resource.download ? <a className="resource-preview" href={resource.href} download>{resource.action}<span>↓</span></a> : <Link className="resource-preview" href={resource.href}>{resource.action}<span>→</span></Link>}
           </article>)}
         </div>
-        <p className="form-note">These resources are fictional portfolio content. Technical files are not available for download.</p>
+        <p className="form-note">Reference materials are prepared for early-stage engineering conversations. Confirm final specifications against the project duty and applicable standards.</p>
       </div>
     </section>
   </>;

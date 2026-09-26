@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { images } from "@/lib/data";
+import { pageMetadata } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "About Axiom",
-  description: "Four decades of industrial systems engineering, manufacturing, quality assurance, and global lifecycle support.",
-};
+export const metadata: Metadata = pageMetadata({title:"About Axiom",description:"Four decades of industrial systems engineering, manufacturing, quality assurance, and global lifecycle support.",path:"/about",image:"/images/factory.webp"});
 
 const capabilities = ["Process equipment fabrication", "Flow and thermal testing", "Controls integration", "Field commissioning"];
 const leaders = [
@@ -21,7 +19,7 @@ export default function AboutPage() {
       <div className="container">
         <div className="eyebrow">About Axiom Forge Systems</div>
         <h1 className="display about-hero-title">Engineering industrial systems that keep the world&apos;s critical infrastructure moving.</h1>
-        <p>A fictional industrial manufacturer concept built around forty years of application-led engineering and accountable production.</p>
+        <p>Built around forty years of application-led engineering and accountable production, Axiom helps critical operations keep moving.</p>
       </div>
     </section>
 
@@ -65,11 +63,11 @@ export default function AboutPage() {
 
     <section className="section section-light">
       <div className="container">
-        <div className="section-heading"><div><div className="eyebrow">Leadership</div><h2 className="display">Accountability starts at the top.</h2></div><p className="light-copy">Fictional leadership profiles for this portfolio concept.</p></div>
+        <div className="section-heading"><div><div className="eyebrow">Leadership</div><h2 className="display">Accountability starts at the top.</h2></div><p className="light-copy">A cross-functional leadership team keeps engineering, manufacturing, and field support aligned.</p></div>
         <div className="leadership-grid">{leaders.map((leader) => <article className="leader" key={leader.name}><h3>{leader.name}</h3><strong>{leader.role}</strong><p>{leader.focus}</p></article>)}</div>
       </div>
     </section>
 
-    <div className="cert-strip"><div className="container certs">{["ISO 9001", "ISO 14001", "CE", "API", "ATEX"].map((certification) => <div className="cert" key={certification}>{certification}<small>PORTFOLIO CONCEPT</small></div>)}</div></div>
+    <div className="cert-strip"><div className="container certs" aria-label="Standards and compliance"><div className="cert"><span>ISO 9001</span><small>QUALITY MANAGEMENT</small></div><div className="cert"><span>ISO 14001</span><small>ENVIRONMENTAL MANAGEMENT</small></div><div className="cert"><span>CE</span><small>EUROPEAN CONFORMITY</small></div><div className="cert"><span>API</span><small>INDUSTRY STANDARDS</small></div><div className="cert"><span>ATEX</span><small>HAZARDOUS ENVIRONMENTS</small></div></div></div>
   </>;
 }
