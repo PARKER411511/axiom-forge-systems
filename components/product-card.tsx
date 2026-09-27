@@ -13,9 +13,14 @@ type ProductCardProps = {
 
 export function ProductCard({ product, featured = false, compact = false, compared = false, onCompare, compareDisabled = false }: ProductCardProps) {
   const image = product.cardImage ?? product.image;
+  const imageSizes = compact
+    ? "(max-width: 680px) 88vw, (max-width: 980px) 45vw, 25vw"
+    : featured
+      ? "(max-width: 680px) 100vw, (max-width: 980px) 55vw, min(650px, 50vw)"
+      : "(max-width: 680px) 100vw, (max-width: 980px) 50vw, 33vw";
   return <article className={`product-card ${featured ? "product-feature" : "product-regular"} ${compact ? "product-card--compact" : ""}`}>
     <Link href={`/products/${product.slug}`} className="product-card-media" aria-label={`View ${product.name}`}>
-      <Image src={image} alt={`${product.name} industrial equipment`} fill sizes={compact ? "(max-width: 680px) 88vw, (max-width: 980px) 45vw, 25vw" : "(max-width: 680px) 100vw, (max-width: 980px) 50vw, 33vw"} />
+      <Image src={image} alt={`${product.name} industrial equipment`} fill sizes={imageSizes} />
       {compact && <span className="product-card-arrow" aria-hidden="true">↗</span>}
     </Link>
     <div className="product-card-body">
