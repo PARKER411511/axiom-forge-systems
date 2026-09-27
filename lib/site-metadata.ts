@@ -11,7 +11,7 @@ export function pageMetadata({ title, description, path, image = defaultOgImage 
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title: `${title} | ${siteName}`, description, url, siteName, type: "website", images: [{ url: imageUrl, width: 1200, height: 800, alt: title }] },
-    twitter: { card: "summary_large_image", title: `${title} | ${siteName}`, description, images: [imageUrl] },
+    openGraph: { title: `${title} | ${siteName}`, description, url, siteName, type: "website", images: [{ url: imageUrl, width: 1200, height: 800, alt: `${title} — ${siteName}` }] },
+    twitter: { card: "summary_large_image", title: `${title} — ${siteName}`, description, images: [{ url: imageUrl, alt: `${title} — ${siteName}` }] },
   };
 }
