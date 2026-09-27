@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const siteUrl = "https://axiom-forge-systems.vercel.app";
 export const siteName = "Axiom Forge Systems";
-export const defaultOgImage = "/images/hero.webp";
+export const defaultOgImage = "/images/hero-precision.webp";
 
 export function pageMetadata({ title, description, path, image = defaultOgImage }: { title: string; description: string; path: string; image?: string }): Metadata {
   const url = `${siteUrl}${path}`;

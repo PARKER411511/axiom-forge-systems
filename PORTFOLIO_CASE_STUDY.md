@@ -11,7 +11,9 @@ Create a premium industrial site that can hold dense specification data without 
 ### What I shaped
 
 - A restrained editorial visual system using dark graphite, warm orange, generous spacing, and locally loaded variable fonts.
+- A precision-led redesign: a shorter equipment hero, an early four-system catalogue rail inspired by compact technical cards, unique cutouts for eight systems, and dedicated environments for all six illustrative projects. The art direction and image plan are in `VISUAL_SYSTEM.md`.
 - A product catalogue with URL-backed search, product-family, industry, and application filters. Browser Back/Forward restores the visible result set.
+- A three-system comparison for early screening and a searchable reference library with local PDF previews and downloads.
 - Product and project detail routes with responsive `next/image` crops, technical specifications, related systems, illustrative technical depth, and route-specific metadata.
 - An accessible RFQ flow with model prefill, select-based choices, validation, step announcements, focus/scroll management, draft recovery, attachment guards, review editing, and local copy/download completion.
 - A contact flow that prepares a local summary for copy or download without pretending to send data to a backend.
@@ -32,6 +34,6 @@ The implementation was checked with:
 
 - `npm run lint`
 - `npx tsc --noEmit --incremental false`
-- `npx next build --webpack`
+- `npm run build`
 
 The project intentionally has no backend or deployment step in this portfolio artifact.

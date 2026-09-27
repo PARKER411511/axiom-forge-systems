@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
@@ -24,6 +25,7 @@ export function ProductsExplorer({ products, initialIndustry }: { products: Prod
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [compareSlugs, setCompareSlugs] = useState<string[]>([]);
   const industries = useMemo(() => Array.from(new Set(products.flatMap((product) => product.industries))).sort(), [products]);
   const applications = useMemo(() => Array.from(new Set(products.flatMap((product) => product.applications))).sort(), [products]);
   const families = useMemo(() => Array.from(new Set(products.map((product) => product.category))).sort(), [products]);
@@ -60,10 +62,18 @@ export function ProductsExplorer({ products, initialIndustry }: { products: Prod
   }
 
   const hasFilters = Object.values(filters).some(Boolean);
+  const comparedProducts = products.filter((product) => compareSlugs.includes(product.slug));
+  const comparedFamilies = new Set(comparedProducts.map((product) => product.category));
+  const sharedSpecs = comparedProducts.length ? comparedProducts[0].specs.filter((spec) => comparedProducts.every((product) => product.specs.some((candidate) => candidate.label === spec.label))) : [];
+  const comparisonNote = comparedFamilies.size === 1 ? "Shared fields are shown for this product family." : sharedSpecs.length ? "Different families selected. Only shared fields are shown; open a detail page for family-specific specifications." : "Different families use different specification vocabularies. The primary reference for each system is shown; open a detail page for the full specification.";
+  function toggleCompare(slug: string) {
+    setCompareSlugs((current) => current.includes(slug) ? current.filter((item) => item !== slug) : current.length < 3 ? [...current, slug] : current);
+  }
+  function clearCompare() { setCompareSlugs([]); }
   return <>
     <div className="filter-bar" role="search">
       <label className="sr-only" htmlFor="product-search">Search products</label>
-      <input id="product-search" className="filter-input" value={filters.query} onChange={(event) => updateFilter("query", event.target.value, "replace")} placeholder="Search model, family, application, or specification" autoComplete="off" />
+      <input id="product-search" className="filter-input" value={filters.query} onChange={(event) => updateFilter("query", event.target.value, "replace")} placeholder="Search products or specs" autoComplete="off" />
       <label className="sr-only" htmlFor="product-family">Filter by product family</label>
       <select id="product-family" className="field" value={filters.family} onChange={(event) => updateFilter("family", event.target.value)}><option value="">All product families</option>{families.map((family) => <option key={family} value={family}>{family}</option>)}</select>
       <label className="sr-only" htmlFor="product-industry">Filter by industry</label>
@@ -72,6 +82,7 @@ export function ProductsExplorer({ products, initialIndustry }: { products: Prod
       <select id="product-application" className="field" value={filters.application} onChange={(event) => updateFilter("application", event.target.value)}><option value="">All applications</option>{applications.map((application) => <option key={application} value={application}>{application}</option>)}</select>
     </div>
     <div className="filter-toolbar"><div className="filter-count" aria-live="polite">Showing <strong>{visible.length}</strong> of {products.length} engineered systems</div>{hasFilters && <button className="filter-reset" type="button" onClick={reset}>Reset filters</button>}</div>
-    {visible.length ? <div className="product-grid">{visible.map((product, index) => <ProductCard product={product} featured={index === 0 && visible.length > 2} key={product.slug} />)}</div> : <div className="empty-state" role="status"><strong>No systems match those filters.</strong><p>Try an application, product family, model name, or specification such as “40 bar”.</p><button className="button button-outline" type="button" onClick={reset}>Clear filters</button></div>}
+    {visible.length ? <div className="product-grid">{visible.map((product, index) => <ProductCard product={product} featured={index === 0 && visible.length > 2} compared={compareSlugs.includes(product.slug)} compareDisabled={compareSlugs.length >= 3 && !compareSlugs.includes(product.slug)} onCompare={() => toggleCompare(product.slug)} key={product.slug} />)}</div> : <div className="empty-state" role="status"><strong>No systems match those filters.</strong><p>Try an application, product family, model name, or specification such as “40 bar”.</p><button className="button button-outline" type="button" onClick={reset}>Clear filters</button></div>}
+    {comparedProducts.length > 1 && <section className="product-compare" aria-labelledby="compare-heading"><div className="product-compare-header"><div><h2 id="compare-heading">Compare selected systems</h2><p className="compare-note">{comparisonNote}</p></div><button className="product-compare-close" type="button" onClick={clearCompare}>Clear comparison</button></div><div className="product-compare-table-wrap"><table className="product-compare-table"><thead><tr><th scope="col">Specification</th>{comparedProducts.map((product) => <th scope="col" key={product.slug}><Link href={`/products/${product.slug}`}>{product.name}</Link></th>)}</tr></thead><tbody><tr><td>System family</td>{comparedProducts.map((product) => <td key={product.slug}>{product.category}</td>)}</tr>{sharedSpecs.length ? sharedSpecs.map((spec) => <tr key={spec.label}><td>{spec.label}</td>{comparedProducts.map((product) => <td key={`${product.slug}-${spec.label}`}>{product.specs.find((candidate) => candidate.label === spec.label)?.value}</td>)}</tr>) : <tr><td>Primary reference</td>{comparedProducts.map((product) => <td key={product.slug}>{product.specLabel}: {product.specValue}</td>)}</tr>}</tbody></table></div></section>}
   </>;
 }

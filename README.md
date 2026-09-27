@@ -18,6 +18,6 @@ Open [http://localhost:3000](http://localhost:3000). For a production check, run
 - `lib/data.ts` contains the portfolio product, project, resource, industry, and navigation data.
 - `public/images/` contains the site imagery, including generated industrial concept photos.
 
-Product filters and the five-step quote flow work in the browser. The quote and contact submissions are simulations; no message, file, or personal data is sent to a server. Resource and datasheet entries are portfolio placeholders and do not link to technical documents.
+Product filters, comparison, resource search, and the five-step quote flow work in the browser. The quote and contact submissions are simulations; no message, file, or personal data is sent to a server. The resource library contains 13 locally generated illustrative PDFs, not validated engineering documents. See [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md) for art direction and the asset plan.
 
 Built with Next.js App Router, TypeScript, Tailwind CSS, and locally bundled Manrope and Inter fonts.
