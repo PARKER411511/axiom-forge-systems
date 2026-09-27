@@ -51,3 +51,11 @@ export const resources: Resource[] = [
  {slug:"modular-conveyor-layout-pack",category:"Installation & application references",type:"Concept layout reference",title:"CX-250 Modular Conveyor Layout Pack",description:"Reference dimensions for early-stage CX-250 planning and layout coordination.",purpose:"Check footprint, routing, and service-access assumptions.",meta:"PDF · 2 pages · Concept layout reference",href:"/cx-250-layout-pack.pdf",action:"Download PDF",download:true}
 ];
 export const navItems = [{label:"Products",href:"/products"},{label:"Industries",href:"/industries"},{label:"Engineering",href:"/#engineering"},{label:"Projects",href:"/projects"},{label:"Resources",href:"/resources"},{label:"About",href:"/about"}];
+export const engineeringPhases = [
+ ["Application Analysis", "Define duty, constraints, access, and the actual operating envelope."],
+ ["System Engineering", "Model equipment, materials, controls, and serviceability together."],
+ ["Manufacturing", "Translate the released design into controlled fabrication and an auditable build record."],
+ ["Testing", "Connect inspection and test plans to the decisions that need to be verified before release."],
+ ["Installation", "Plan site access, tie-ins, commissioning windows, and a usable handoff."],
+ ["Lifecycle Support", "Carry the engineering record forward through inspection, changes, and service."],
+] as const;
