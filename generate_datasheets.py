@@ -6,12 +6,14 @@ but are not a substitute for an approved project specification.
 """
 
 from pathlib import Path
+import sys
 
+from PIL import Image as PILImage
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
-from reportlab.graphics.shapes import Drawing, Line, Rect, String
+from reportlab.graphics.shapes import Drawing, Line, PolyLine, Rect, String
 from reportlab.platypus import Image, PageBreak, Paragraph, Spacer, Table, TableStyle
 
 
@@ -190,7 +192,14 @@ def image_block(path, width=174 * mm, height=54 * mm):
     image_path = ROOT / "public" / path.lstrip("/")
     if not image_path.exists():
         return Spacer(1, 2 * mm)
-    return Image(str(image_path), width=width, height=height, kind="proportional")
+    optimized_dir = ROOT / "tmp" / "pdfs"
+    optimized_dir.mkdir(parents=True, exist_ok=True)
+    optimized_path = optimized_dir / f"{image_path.stem}-pdf.jpg"
+    with PILImage.open(image_path) as source:
+        source = source.convert("RGB")
+        source.thumbnail((1200, 900), PILImage.Resampling.LANCZOS)
+        source.save(optimized_path, format="JPEG", quality=88, optimize=True, progressive=True)
+    return Image(str(optimized_path), width=width, height=height, kind="proportional")
 
 
 def section_label(text):
@@ -259,6 +268,34 @@ def layout_drawing():
     return drawing
 
 
+def pump_curve_drawing():
+    """Add a compact conceptual pump/system curve to the pump selection guide."""
+    width, height = 492, 148
+    drawing = Drawing(width, height)
+    drawing.add(String(0, 135, "CONCEPTUAL SYSTEM-CURVE CHECK", fontName="Helvetica-Bold", fontSize=8, fillColor=ORANGE))
+    drawing.add(String(0, 122, "The duty point is the conversation between the pump curve and the installed system curve.", fontName="Helvetica", fontSize=7.5, fillColor=SLATE))
+    left, bottom, right, top = 42, 23, 408, 106
+    drawing.add(Line(left, bottom, left, top, strokeColor=INK, strokeWidth=0.9))
+    drawing.add(Line(left, bottom, right, bottom, strokeColor=INK, strokeWidth=0.9))
+    for y in (bottom + 21, bottom + 42, bottom + 63):
+        drawing.add(Line(left, y, right, y, strokeColor=LINE, strokeWidth=0.45, strokeDashArray=[2, 3]))
+    duty_x, duty_y = left + 205, bottom + 46
+    system = [(left + 8, bottom + 9), (left + 78, bottom + 12), (left + 148, bottom + 27), (duty_x, duty_y), (left + 288, bottom + 66), (right - 6, top - 5)]
+    pump = [(left + 8, top - 3), (left + 78, top - 8), (left + 148, top - 24), (duty_x, duty_y), (left + 288, bottom + 29), (right - 6, bottom + 7)]
+    drawing.add(PolyLine(system, strokeColor=TEAL, strokeWidth=2.1))
+    drawing.add(PolyLine(pump, strokeColor=ORANGE, strokeWidth=2.1))
+    drawing.add(Line(duty_x, duty_y, duty_x, bottom, strokeColor=SLATE, strokeWidth=0.55, strokeDashArray=[3, 3]))
+    drawing.add(Line(left, duty_y, duty_x, duty_y, strokeColor=SLATE, strokeWidth=0.55, strokeDashArray=[3, 3]))
+    drawing.add(Rect(duty_x - 3, duty_y - 3, 6, 6, fillColor=ORANGE, strokeColor=INK, strokeWidth=0.8))
+    drawing.add(String(duty_x + 8, duty_y + 4, "illustrative duty point", fontName="Helvetica-Bold", fontSize=6.8, fillColor=INK))
+    drawing.add(String(left + 72, top - 4, "pump curve", fontName="Helvetica-Bold", fontSize=6.8, fillColor=ORANGE))
+    drawing.add(String(right - 114, top - 7, "system curve", fontName="Helvetica-Bold", fontSize=6.8, fillColor=TEAL))
+    drawing.add(String(2, top - 3, "Head / dP", fontName="Helvetica", fontSize=6.8, fillColor=SLATE))
+    drawing.add(String(right - 32, bottom - 13, "Flow / Q", fontName="Helvetica", fontSize=6.8, fillColor=SLATE))
+    drawing.add(String(0, 4, "Concept only - no measured performance data or certified operating point is represented.", fontName="Helvetica-Bold", fontSize=6.8, fillColor=ORANGE))
+    return drawing
+
+
 def guide_pdf(path, data, slug):
     title = data["title"].replace("+", "and")
     story = [para(data["title"], TITLE), para(data["kicker"], KICKER), para(data["lede"], DECK), Table([[para("PRIMARY AUDIENCE", LABEL), para("REFERENCE STATUS", LABEL)], [para(data["audience"], VALUE), para("Illustrative project concept", VALUE)]], colWidths=[105 * mm, 69 * mm], rowHeights=[7 * mm, 14 * mm], style=TableStyle([("BACKGROUND", (0, 0), (-1, 0), MIST), ("BACKGROUND", (0, 1), (-1, 1), PALE_ORANGE), ("BOX", (0, 0), (-1, -1), 0.6, LINE), ("INNERGRID", (0, 0), (-1, -1), 0.4, LINE), ("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 5), ("RIGHTPADDING", (0, 0), (-1, -1), 5), ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 4)])), Spacer(1, 7 * mm)]
@@ -266,6 +303,8 @@ def guide_pdf(path, data, slug):
         story.extend([layout_drawing(), Spacer(1, 5 * mm), section_label("Reference envelope and release checks"), Table([[para("PARAMETER", TABLE_HEAD), para("REFERENCE", TABLE_HEAD), para("RELEASE CHECK", TABLE_HEAD)], [para("Belt width", TABLE_LABEL), para("400-1,600 mm", TABLE_BODY), para("Select from material, loading, transfer, and access data.", TABLE_BODY)], [para("Route length", TABLE_LABEL), para("Up to 250 m per drive", TABLE_BODY), para("Confirm route, tension, take-up, support, and drive arrangement.", TABLE_BODY)], [para("Throughput", TABLE_LABEL), para("Up to 1,200 t/h", TABLE_BODY), para("Verify bulk density, flow profile, speed, loading, and transfer behavior.", TABLE_BODY)], [para("Frame", TABLE_LABEL), para("Painted / galvanized steel", TABLE_BODY), para("Coordinate corrosion environment, support steel, access, and finish.", TABLE_BODY)], [para("Controls", TABLE_LABEL), para("PLC / VFD-ready", TABLE_BODY), para("Define operating modes, permissives, signals, and ownership.", TABLE_BODY)]], colWidths=[38 * mm, 47 * mm, 89 * mm], style=table_style()), PageBreak()])
     else:
         story.extend([section_label("Field sequence"), intent_table(data["steps"]), PageBreak()])
+        if slug == "pump-selection-guide":
+            story.extend([pump_curve_drawing(), Spacer(1, 4 * mm)])
     if slug == "cx-250-layout-pack":
         story.extend([para("CX-250 / COORDINATION NOTES", TITLE), para("LAYOUT RELEASE WORKFLOW", KICKER), para("The pack is most useful when the route and its interfaces are treated as a controlled set of project inputs. Resolve the items below before converting a concept into a detailed layout.", DECK), section_label("Coordinate the route"), intent_table([("01 / Set the route", "Locate loading, discharge, transfer, elevation, and access zones. Keep L, B, H, and S visible in the model and in the review comments."), ("02 / Close interfaces", "Coordinate support steel, drives, take-up, chutes, electrical drops, dust control, guarding, inspection, and clean-out with the surrounding plant."), ("03 / Release for detail", "Confirm material, loading, width, speed, incline, support spacing, and site conditions in the approved layout before fabrication or construction.")]), Spacer(1, 7 * mm), section_label("Minimum release information"), checklist_table(["Material, bulk density, moisture, lump size, and loading profile", "Start, stop, transfer, incline, and operating mode cases", "Belt width, route length, support spacing, and take-up basis", "Civil, structural, electrical, chute, dust, and access interfaces", "Approved drawing status, revision, and field set-out responsibility"]), Spacer(1, 8 * mm), para("This concept pack intentionally does not provide fabrication dimensions, tolerances, load calculations, or construction approval. Use it to coordinate the questions that the approved project layout must answer.", SMALL)])
     else:
@@ -273,8 +312,16 @@ def guide_pdf(path, data, slug):
     doc_for(path, title).build(story, onFirstPage=header_footer, onLaterPages=header_footer)
 
 
-for slug, data in PRODUCTS.items():
-    product_pdf(OUT / f"{slug}.pdf", data)
+if __name__ == "__main__":
+    selected = set(sys.argv[1:])
+    unknown = selected - PRODUCTS.keys() - GUIDES.keys()
+    if unknown:
+        raise SystemExit(f"Unknown PDF slug(s): {', '.join(sorted(unknown))}")
 
-for slug, data in GUIDES.items():
-    guide_pdf(OUT / f"{slug}.pdf", data, slug)
+    for slug, data in PRODUCTS.items():
+        if not selected or slug in selected:
+            product_pdf(OUT / f"{slug}.pdf", data)
+
+    for slug, data in GUIDES.items():
+        if not selected or slug in selected:
+            guide_pdf(OUT / f"{slug}.pdf", data, slug)
