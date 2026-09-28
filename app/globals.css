@@ -161,7 +161,7 @@ button { cursor:pointer; }
 .detail-section h2 { margin:12px 0 20px; font-size:clamp(42px,5vw,70px); }
 .detail-section p { max-width:700px; color:#5c6871; line-height:1.75; }
 .application-list { display:flex; flex-wrap:wrap; gap:10px; margin-top:30px; }
-.application-list span { padding:11px 14px; border:1px solid #bdc6cb; color:#46515a; font-size:12px; }
+.application-list span { padding:11px 14px; border:1px solid #bdc6cb; color:#d4dce1; font-size:12px; }
 .download-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 0; border-top:1px solid var(--border); }
 .download-row:last-child { border-bottom:1px solid var(--border); }
 .download-row strong { font-size:14px; }
@@ -468,6 +468,11 @@ button { cursor:pointer; }
 .product-grid.homepage-product-grid > .product-feature:nth-child(4) { grid-column:span 1; }
 .product-card, .project-card, .resource-card, .image-card { min-width:0; }
 .product-card p, .project-card p, .project-feature-content p { overflow-wrap:anywhere; }
+.product-related-context .section-heading > div { min-width:0; }
+.product-related-context .section-heading > p { flex:0 1 390px; min-width:0; max-width:390px; margin:0; color:#b7c0c6; overflow-wrap:anywhere; }
+.product-related-projects > .project-card { min-width:0; }
+.product-related-projects--single > .project-card { grid-column:1 / -1; }
+.product-related-projects .project-card-content { min-width:0; }
 .case-study-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
 .case-study-card { min-width:0; overflow:hidden; }
 .case-study-card strong, .case-study-card span { overflow-wrap:anywhere; }
@@ -501,6 +506,8 @@ button { cursor:pointer; }
   .concept-note { margin-top:22px; }
   .industry-index { display:block; margin-bottom:30px; }
   .industry-index ol { margin-top:14px; gap:10px 15px; }
+  .product-related-context .section-heading > p { max-width:none; margin-top:21px; }
+  .product-related-projects--single > .project-card { grid-column:auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior:auto; }
