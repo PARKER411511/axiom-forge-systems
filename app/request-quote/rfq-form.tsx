@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import { industries, products, projects } from "@/lib/data";
+import { Select } from "@/components/select";
 
 const steps = ["Contact information", "Project details", "Technical information", "Attachments", "Review and prepare"];
 const draftKey = "axiom-rfq-draft-v2";
@@ -256,12 +257,7 @@ export function RFQForm() {
           ["timeline", "Project timeline", ["Exploring options", "0–3 months", "3–6 months", "6–12 months", "12+ months"]],
         ].map(([key, label, options]) => <div className="form-field" key={String(key)}>
           <label htmlFor={`rfq-${key}`}>{label}{key === "industry" || key === "application" || key === "timeline" ? " *" : ""}</label>
-          <select id={`rfq-${key}`} className="field" required={key === "industry" || key === "application" || key === "timeline"} value={data[String(key)] || ""} onChange={(event) => { const value = event.target.value; set(String(key), value); if (key === "category" && data.productModel && value && value !== "help-me-select" && !products.some((product) => product.category === value && product.name === data.productModel)) set("productModel", ""); }}>
-            <option value="">Select {String(label).toLowerCase()}</option>
-            {key === "category" && <option value="help-me-select">Help me select a system</option>}
-            {key === "productModel" && <option value="help-me-select">Not sure yet - help me select</option>}
-            {(options as string[]).map((option) => <option key={option} value={option}>{option}</option>)}
-          </select>
+          <Select id={`rfq-${key}`} name={String(key)} required={key === "industry" || key === "application" || key === "timeline"} value={data[String(key)] || ""} onValueChange={(value) => { set(String(key), value); if (key === "category" && data.productModel && value && value !== "help-me-select" && !products.some((product) => product.category === value && product.name === data.productModel)) set("productModel", ""); }} options={[{ value: "", label: `Select ${String(label).toLowerCase()}` }, ...(key === "category" ? [{ value: "help-me-select", label: "Help me select a system" }] : []), ...(key === "productModel" ? [{ value: "help-me-select", label: "Not sure yet - help me select" }] : []), ...(options as string[]).map((option) => ({ value: option, label: option }))]} placeholder={`Select ${String(label).toLowerCase()}`} />
         </div>)}
         <div className="form-field"><label htmlFor="rfq-quantity">Required quantity <span className="field-optional">(optional)</span></label><input id="rfq-quantity" className="field" type="number" min="1" step="1" value={data.quantity || ""} onChange={(event) => set("quantity", event.target.value)} placeholder="e.g. 2, if known" /></div>
       </div>

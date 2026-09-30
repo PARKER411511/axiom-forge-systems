@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
+import { Select } from "@/components/select";
 
 const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -75,11 +76,11 @@ export function ProductsExplorer({ products, initialIndustry }: { products: Prod
       <label className="sr-only" htmlFor="product-search">Search products</label>
       <input id="product-search" className="filter-input" value={filters.query} onChange={(event) => updateFilter("query", event.target.value, "replace")} placeholder="Search products or specs" autoComplete="off" />
       <label className="sr-only" htmlFor="product-family">Filter by product family</label>
-      <select id="product-family" className="field" value={filters.family} onChange={(event) => updateFilter("family", event.target.value)}><option value="">All product families</option>{families.map((family) => <option key={family} value={family}>{family}</option>)}</select>
+      <Select id="product-family" value={filters.family} onValueChange={(value) => updateFilter("family", value)} options={[{ value: "", label: "All product families" }, ...families.map((family) => ({ value: family, label: family }))]} placeholder="All product families" />
       <label className="sr-only" htmlFor="product-industry">Filter by industry</label>
-      <select id="product-industry" className="field" value={filters.industry} onChange={(event) => updateFilter("industry", event.target.value)}><option value="">All industries</option>{industries.map((industry) => <option key={industry} value={industry}>{industry}</option>)}</select>
+      <Select id="product-industry" value={filters.industry} onValueChange={(value) => updateFilter("industry", value)} options={[{ value: "", label: "All industries" }, ...industries.map((industry) => ({ value: industry, label: industry }))]} placeholder="All industries" />
       <label className="sr-only" htmlFor="product-application">Filter by application</label>
-      <select id="product-application" className="field" value={filters.application} onChange={(event) => updateFilter("application", event.target.value)}><option value="">All applications</option>{applications.map((application) => <option key={application} value={application}>{application}</option>)}</select>
+      <Select id="product-application" value={filters.application} onValueChange={(value) => updateFilter("application", value)} options={[{ value: "", label: "All applications" }, ...applications.map((application) => ({ value: application, label: application }))]} placeholder="All applications" />
     </div>
     <div className="filter-toolbar"><div className="filter-count" aria-live="polite">Showing <strong>{visible.length}</strong> of {products.length} engineered systems</div>{hasFilters && <button className="filter-reset" type="button" onClick={reset}>Reset filters</button>}</div>
     {visible.length ? <div className="product-grid">{visible.map((product, index) => <ProductCard product={product} featured={index === 0 && visible.length > 2} compared={compareSlugs.includes(product.slug)} compareDisabled={compareSlugs.length >= 3 && !compareSlugs.includes(product.slug)} onCompare={() => toggleCompare(product.slug)} key={product.slug} />)}</div> : <div className="empty-state" role="status"><strong>No systems match those filters.</strong><p>Try an application, product family, model name, or specification such as “40 bar”.</p><button className="button button-outline" type="button" onClick={reset}>Clear filters</button></div>}
